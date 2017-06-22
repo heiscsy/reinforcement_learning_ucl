@@ -31,7 +31,8 @@ def policy_iteration(value, policy):
       target_pose = np.array([row, col]) + m
       if legal_pose(target_pose):
         value_new[row, col] = policy[state-1, m_idx] * (value[target_pose[0], target_pose[1]]-1)+value_new[row, col]
-    value_new[row, col] = value_new[row, col]+value[row, col]
+      else:
+        value_new[row, col] = policy[state-1, m_idx] * (value[row, col]-1)+value_new[row, col]
   return value_new
 
 def update_policy(value, policy):
@@ -43,12 +44,14 @@ def update_policy(value, policy):
     col = state%4
     for m_idx in range(4):
       target_pose = np.array([row, col])+move[m_idx]
-      if legal_pose(target_pose):
-        if value[target_pose[0], target_pose[1]]>max_neightbour_value:
-          max_neightbour_value = value[target_pose[0], target_pose[1]]
-          max_neightbour_idx = [m_idx]
-        elif value[target_pose[0], target_pose[1]]==max_neightbour_value:
-          max_neightbour_idx.append(m_idx)
+      target_value = value[target_pose[0], target_pose[1]] if\
+        legal_pose(target_pose) else \
+        value[row, col] 
+      if target_value>max_neightbour_value:
+        max_neightbour_value = target_value
+        max_neightbour_idx = [m_idx]
+      elif target_value==max_neightbour_value:
+        max_neightbour_idx.append(m_idx)
     for m_idx in max_neightbour_idx:
       policy_new[state-1, m_idx] = 1/len(max_neightbour_idx)
   return policy_new
@@ -62,10 +65,23 @@ def visualize_policy(policy):
 def main():
   value = np.zeros([4,4])
   policy = np.ones([14,4]) * 0.25
-  for idx in range(10):
-    value = policy_iteration(value, policy)
-    policy = update_policy(value, policy)
-    visualize_value(value)
+  while True:
+    idx=0
+    while True:
+      value_new = policy_iteration(value, policy)
+      if np.sum((value-value_new)*(value-value_new))<0.1:
+        break
+      else:
+        value = value_new
+      print("step: %s"%(idx))
+      visualize_value(value)
+      idx = idx +1
+    policy_new = update_policy(value, policy)
+    if np.sum((policy-policy_new)*(policy-policy_new))<0.1:
+     break
+    else:
+      policy=policy_new
+    visualize_policy(policy)
 
 if __name__ == '__main__':
   main()
