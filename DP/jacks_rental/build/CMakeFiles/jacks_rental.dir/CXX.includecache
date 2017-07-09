@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/yuhanlong/Documents/reinforcement_learning/DP/jacks_rental/jacks_rental.cpp
+vector
+-
+assert.h
+-
+cmath
+-
+memory
+-
+iostream
+-
+limits
+-
+
