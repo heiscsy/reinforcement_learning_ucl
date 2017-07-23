@@ -17,7 +17,11 @@ def init():
 
 def dealerPlay(dealer):
   while(dealer<17):
-    dealer = dealer + np.random.randint(low=1, high=10)
+    card = np.random.randint(low=1, high=10)
+    if card ==1 and dealer +11 <= 21:
+      dealer = dealer + 11
+    else:
+      dealer = dealer + card 
   return dealer
 
 def play(hand, dealer):
@@ -64,7 +68,7 @@ def main():
     print(terminate,',',hand)
     while not terminate:
       bp_trail.append([hand-12, usable, dealer-2])
-      terminate, hand, reward = play(hand, usable)
+      terminate, hand, reward = play(hand, dealer)
       print(terminate,',',hand)
     state, state_count = updateValue(state, state_count, bp_trail, reward)
   state = np.nan_to_num(state / state_count)
